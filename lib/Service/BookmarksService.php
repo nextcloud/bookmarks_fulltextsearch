@@ -178,17 +178,18 @@ class BookmarksService {
 	 * @return bool
 	 */
 	public function isDocumentUpToDate($document) {
-//		$index = $document->getIndex();
-//
-//		if ($index->getStatus() !== Index::INDEX_OK) {
-//			return false;
-//		}
-//
-//		if ($index->getLastIndex() >= $document->getModifiedTime()) {
-//			return true;
-//		}
+		$index = $document->getIndex();
 
-		return false;
+		if ($index->getStatus() !== Index::INDEX_OK) {
+			return false;
+		}
+
+		$s = $this->configService->getAppValue(ConfigService::BOOKMARKS_TTL) * 3600 * 24;
+		if ($index->getLastIndex() < (time() - $s)) {
+			return false;
+		}
+
+		return true;
 	}
 
 
@@ -236,7 +237,9 @@ class BookmarksService {
 	private function generateDocumentFromIndex(Index $index) {
 
 		$bookmark =
-			$this->bookmarksClass->findUniqueBookmark($index->getDocumentId(), $index->getOwnerId());
+			$this->bookmarksClass->findUniqueBookmark(
+				$index->getDocumentId(), $index->getOwnerId()
+			);
 
 		if (sizeof($bookmark) === 0) {
 			$index->setStatus(Index::INDEX_REMOVE);
