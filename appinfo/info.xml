@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>bookmarks_fulltextsearch</id>
+	<name>Full text search - Bookmarks (BETA)</name>
+	<summary>Index bookmarks</summary>
+	<description><![CDATA[
+
+Extension to the _Full text search_ app to index your users' bookmarks.
+
+	]]>
+	</description>
+	<version>0.1.4</version>
+	<licence>agpl</licence>
+	<author>Maxence Lange</author>
+	<namespace>Bookmarks_FullTextSearch</namespace>
+	<documentation>
+		<admin>https://github.com/nextcloud/bookmarks_fulltextsearch/wiki</admin>
+	</documentation>
+	<category>tools</category>
+	<website>https://github.com/nextcloud/bookmarks_fulltextsearch</website>
+	<bugs>https://github.com/nextcloud/bookmarks_fulltextsearch/issues</bugs>
+	<repository>https://github.com/nextcloud/bookmarks_fulltextsearch.git</repository>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/fulltextsearch/master/screenshots/0.3.0.png</screenshot>
+	<dependencies>
+		<nextcloud min-version="12" max-version="14"/>
+	</dependencies>
+
+	<settings>
+		<admin>OCA\Bookmarks_FullTextSearch\Settings\Admin</admin>
+	</settings>
+
+	<fulltextsearch>
+		<provider>OCA\Bookmarks_FullTextSearch\Provider\BookmarksProvider</provider>
+	</fulltextsearch>
+
+</info>
