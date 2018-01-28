@@ -55,7 +55,9 @@ class BookmarksEvents {
 	 * @param BookmarksService $bookmarksService
 	 * @param MiscService $miscService
 	 */
-	public function __construct($userId, BookmarksService $bookmarksService, MiscService $miscService) {
+	public function __construct(
+		$userId, BookmarksService $bookmarksService, MiscService $miscService
+	) {
 
 		$this->userId = $userId;
 		$this->bookmarksService = $bookmarksService;

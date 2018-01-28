@@ -140,7 +140,7 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 *
 	 * @param string $userId
 	 *
-	 * @return IndexDocument[]
+	 * @return BookmarksDocument[]
 	 */
 	public function generateIndexableDocuments($userId) {
 		$bookmarks = $this->bookmarksService->getBookmarksFromUser($this->runner, $userId);
@@ -179,7 +179,7 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	/**
 	 * @param Index $index
 	 *
-	 * @return IndexDocument|null
+	 * @return BookmarksDocument|null
 	 */
 	public function updateDocument(Index $index) {
 		return $this->bookmarksService->updateDocument($index);
@@ -213,7 +213,9 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 * @param SearchRequest $request
 	 * @param array $arr
 	 */
-	public function onSearchingQuery(IFullTextSearchPlatform $platform, SearchRequest $request, &$arr) {
+	public function onSearchingQuery(
+		IFullTextSearchPlatform $platform, SearchRequest $request, &$arr
+	) {
 		$this->elasticSearchService->onSearchingQuery($platform, $request, $arr);
 	}
 
