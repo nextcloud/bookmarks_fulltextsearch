@@ -36,7 +36,7 @@ class ConfigService {
 	const BOOKMARKS_TTL = 'bookmarks_ttl';
 
 	private $defaults = [
-		self::BOOKMARKS_TTL     => '5'
+		self::BOOKMARKS_TTL => '5'
 	];
 
 
@@ -141,74 +141,6 @@ class ConfigService {
 	 */
 	public function optionIsSelected($key) {
 		return ($this->getAppValue($key) === '1');
-	}
-
-
-	/**
-	 * Get a user value by key
-	 *
-	 * @param string $key
-	 *
-	 * @return string
-	 */
-	public function getUserValue($key) {
-		$defaultValue = null;
-		if (array_key_exists($key, $this->defaults)) {
-			$defaultValue = $this->defaults[$key];
-		}
-
-		return $this->config->getUserValue(
-			$this->userId, Application::APP_NAME, $key, $defaultValue
-		);
-	}
-
-	/**
-	 * Set a user value by key
-	 *
-	 * @param string $key
-	 * @param string $value
-	 *
-	 * @return string
-	 * @throws PreConditionNotMetException
-	 */
-	public function setUserValue($key, $value) {
-		return $this->config->setUserValue($this->userId, Application::APP_NAME, $key, $value);
-	}
-
-	/**
-	 * Get a user value by key and user
-	 *
-	 * @param string $userId
-	 * @param string $key
-	 *
-	 * @return string
-	 */
-	public function getValueForUser($userId, $key) {
-		return $this->config->getUserValue($userId, Application::APP_NAME, $key);
-	}
-
-	/**
-	 * Set a user value by key
-	 *
-	 * @param string $userId
-	 * @param string $key
-	 * @param string $value
-	 *
-	 * @return string
-	 * @throws PreConditionNotMetException
-	 */
-	public function setValueForUser($userId, $key, $value) {
-		return $this->config->setUserValue($userId, Application::APP_NAME, $key, $value);
-	}
-
-
-	/**
-	 * @param string $key
-	 *
-	 * @return mixed
-	 */
-	public function getSystemValue($key) {
-		return $this->config->getSystemValue($key);
 	}
 
 

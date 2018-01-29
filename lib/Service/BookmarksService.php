@@ -177,11 +177,7 @@ class BookmarksService {
 		}
 
 		$s = $this->configService->getAppValue(ConfigService::BOOKMARKS_TTL) * 3600 * 24;
-		if ($index->getLastIndex() < (time() - $s)) {
-			return false;
-		}
-
-		return true;
+		return ($index->getLastIndex() > time() - $s);
 	}
 
 
