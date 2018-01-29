@@ -27,29 +27,7 @@
 namespace OCA\Bookmarks_FullTextSearch\Service;
 
 
-use Exception;
-use OC\Share\Constants;
-use OC\Share\Share;
-use OCA\Bookmarks_FullTextSearch\Exceptions\FileIsNotIndexableException;
-use OCA\Bookmarks_FullTextSearch\Model\BookmarksDocument;
-use OCA\Bookmarks_FullTextSearch\Provider\BookmarksProvider;
-use OCA\FullTextSearch\Exceptions\InterruptException;
-use OCA\FullTextSearch\Exceptions\TickDoesNotExistException;
-use OCA\FullTextSearch\Model\DocumentAccess;
-use OCA\FullTextSearch\Model\Index;
-use OCA\FullTextSearch\Model\IndexDocument;
-use OCA\FullTextSearch\Model\Runner;
 use OCA\FullTextSearch\Model\SearchRequest;
-use OCP\Files\File;
-use OCP\Files\FileInfo;
-use OCP\Files\Folder;
-use OCP\Files\InvalidPathException;
-use OCP\Files\IRootFolder;
-use OCP\Files\Node;
-use OCP\Files\NotFoundException;
-use OCP\Files\NotPermittedException;
-use OCP\IUserManager;
-use OCP\Share\IManager;
 
 class SearchService {
 

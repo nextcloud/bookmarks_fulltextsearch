@@ -37,15 +37,11 @@ use OCA\FullTextSearch\Model\IndexDocument;
 use OCA\FullTextSearch\Model\Runner;
 use OCP\AppFramework\IAppContainer;
 use OCP\AppFramework\QueryException;
-use OCP\Files\IRootFolder;
 
 class BookmarksService {
 
 	const DOCUMENT_TYPE = 'bookmarks';
 
-
-	/** @var IRootFolder */
-	private $rootFolder;
 
 	/** @var ConfigService */
 	private $configService;
@@ -60,17 +56,13 @@ class BookmarksService {
 	/**
 	 * BookmarksService constructor.
 	 *
-	 * @param IRootFolder $rootFolder
 	 * @param IAppContainer $container
 	 * @param ConfigService $configService
 	 * @param MiscService $miscService
 	 */
 	public function __construct(
-		IRootFolder $rootFolder, IAppContainer $container,
-		ConfigService $configService, MiscService $miscService
+		IAppContainer $container, ConfigService $configService, MiscService $miscService
 	) {
-		$this->rootFolder = $rootFolder;
-
 		$this->configService = $configService;
 		$this->miscService = $miscService;
 
