@@ -84,7 +84,9 @@ class ElasticSearchService {
 	 * @param SearchRequest $request
 	 * @param array $arr
 	 */
-	public function onSearchingQuery(IFullTextSearchPlatform $platform, SearchRequest $request, &$arr) {
+	public function onSearchingQuery(
+		IFullTextSearchPlatform $platform, SearchRequest $request, &$arr
+	) {
 		if ($platform->getId() !== 'elastic_search') {
 			return;
 		}
