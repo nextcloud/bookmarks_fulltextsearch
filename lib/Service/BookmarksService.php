@@ -98,12 +98,12 @@ class BookmarksService {
 	/**
 	 * @param BookmarksDocument[] $documents
 	 *
+	 * TODO - update $document with a error status instead of just ignore !
 	 * @return array
 	 */
 	public function generateDocuments($documents) {
 
 		$index = [];
-
 		foreach ($documents as $document) {
 			if (!($document instanceof BookmarksDocument)) {
 				continue;
@@ -112,7 +112,6 @@ class BookmarksService {
 			try {
 				$this->updateDocumentFromBookmarksDocument($document);
 			} catch (Exception $e) {
-				// TODO - update $document with a error status instead of just ignore !
 				$document->getIndex()
 						 ->setStatus(Index::INDEX_IGNORE);
 				echo 'Exception: ' . json_encode($e->getTrace()) . ' - ' . $e->getMessage() . "\n";
