@@ -24,25 +24,25 @@
  */
 
 /** global: OCA */
-/** global: files_elements */
-/** global: files_settings */
+/** global: bookmarks_elements */
+/** global: bookmarks_settings */
 
 
 $(document).ready(function () {
 
 
 	/**
-	 * @constructs Fts_Files
+	 * @constructs Fts_Bookmarks
 	 */
-	var Fts_Files = function () {
-		$.extend(Fts_Files.prototype, files_elements);
-		$.extend(Fts_Files.prototype, files_settings);
+	var Fts_Bookmarks = function () {
+		$.extend(Fts_Bookmarks.prototype, bookmarks_elements);
+		$.extend(Fts_Bookmarks.prototype, bookmarks_settings);
 
-		files_elements.init();
-		files_settings.refreshSettingPage();
+		bookmarks_elements.init();
+		bookmarks_settings.refreshSettingPage();
 	};
 
-	OCA.FullTextSearchAdmin.files = Fts_Files;
-	OCA.FullTextSearchAdmin.files.settings = new Fts_Files();
+	OCA.FullTextSearchAdmin.bookmarks = Fts_Bookmarks;
+	OCA.FullTextSearchAdmin.bookmarks.settings = new Fts_Bookmarks();
 
 });

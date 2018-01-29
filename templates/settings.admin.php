@@ -39,12 +39,12 @@ Util::addScript(Application::APP_NAME, 'admin');
 	<div class="div-table">
 		<div class="div-table-row">
 			<div class="div-table-col div-table-col-left">
-				<span class="leftcol">Refreshing delay:</span>
+				<span class="leftcol">Re-indexing delay:</span>
 				<br/>
-				<em>Number of days.</em>
+				<em>Number of days before forcing a re-index of the bookmarks.</em>
 			</div>
 			<div class="div-table-col">
-				<input type="text" class="small" id="bookmarks_refresh" value="7"/>
+				<input type="text" class="small" id="bookmarks_ttl" value=""/>
 			</div>
 		</div>
 	</div>
