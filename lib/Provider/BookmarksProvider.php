@@ -100,6 +100,14 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	}
 
 
+	/**
+	 * @return array
+	 */
+	public function getConfiguration() {
+		return $this->configService->getConfig();
+	}
+
+
 	public function setRunner(Runner $runner) {
 		$this->runner = $runner;
 	}
