@@ -108,16 +108,24 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	}
 
 
+	/**
+	 * @param Runner $runner
+	 */
 	public function setRunner(Runner $runner) {
 		$this->runner = $runner;
 	}
 
 
 	/**
-	 * @return string
+	 * @return array
 	 */
 	public function getOptionsTemplate() {
-		return '';
+		return [
+			'navigation' => [
+				'icon' => 'icon-bookmarks',
+				'css'  => 'navigate'
+			]
+		];
 	}
 
 
