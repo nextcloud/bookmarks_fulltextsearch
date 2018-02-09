@@ -31,7 +31,6 @@ const fullTextSearch = OCA.FullTextSearch.api;
 
 var elements = {
 	old_bookmarks: null,
-	old_searchbox: null,
 	search_result: null,
 	template_entry: null
 };
@@ -48,8 +47,6 @@ Bookmarks_FullTextSearch.prototype = {
 		var self = this;
 
 		elements.old_bookmarks = $('.bookmarks_list');
-		elements.old_searchbox = $('FORM.searchbox');
-		elements.old_searchbox.hide();
 
 		elements.search_result = $('<div>');
 		elements.search_result.insertBefore(elements.old_bookmarks);
@@ -57,9 +54,9 @@ Bookmarks_FullTextSearch.prototype = {
 		elements.search_input = $('#next_search_input');
 
 		elements.template_entry = self.generateTemplateEntry();
-		fullTextSearch.setEntryTemplateId(elements.template_entry, self);
-		fullTextSearch.setResultContainerId(elements.search_result);
-		fullTextSearch.addSearchBar('bookmarks');
+		fullTextSearch.setEntryTemplate(elements.template_entry);
+		fullTextSearch.setResultContainer(elements.search_result);
+		fullTextSearch.initFullTextSearch('bookmarks', 'bookmarks', self);
 	},
 
 
