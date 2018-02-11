@@ -35,7 +35,7 @@ class ConfigService {
 
 	const BOOKMARKS_TTL = 'bookmarks_ttl';
 
-	private $defaults = [
+	public $defaults = [
 		self::BOOKMARKS_TTL => '5'
 	];
 

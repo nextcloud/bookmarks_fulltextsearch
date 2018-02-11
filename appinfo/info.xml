@@ -26,6 +26,10 @@ Extension to the _Full text search_ app to index your users' bookmarks.
 		<nextcloud min-version="12" max-version="14"/>
 	</dependencies>
 
+	<commands>
+		<command>OCA\Bookmarks_FullTextSearch\Command\Configure</command>
+	</commands>
+
 	<settings>
 		<admin>OCA\Bookmarks_FullTextSearch\Settings\Admin</admin>
 	</settings>
