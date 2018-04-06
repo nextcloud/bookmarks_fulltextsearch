@@ -21,16 +21,18 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *  
+ *
  */
 
 namespace OCA\Bookmarks_FullTextSearch\AppInfo;
 
 use OCP\AppFramework\QueryException;
 
+
 $app = new Application();
 
 try {
+	$app->registerHooks();
 	$app->registerBookmarksSearch();
 } catch (QueryException $e) {
 	/** you do nothing. */

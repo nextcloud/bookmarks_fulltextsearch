@@ -44,22 +44,21 @@ class Application extends App {
 	/** @var EventDispatcherInterface */
 	private $eventDispatcher;
 
+
 	/**
 	 * @param array $params
 	 */
-	public function __construct(array $params = array()) {
+	public function __construct(array $params = []) {
 		parent::__construct(self::APP_NAME, $params);
-
-		$this->eventDispatcher = \OC::$server->getEventDispatcher();
-
-		$this->registerHooks();
 	}
 
 
 	/**
 	 * Register Hooks
 	 */
-	private function registerHooks() {
+	public function registerHooks() {
+		$this->eventDispatcher = \OC::$server->getEventDispatcher();
+
 		$this->registerHookCreate();
 		$this->registerHookUpdate();
 		$this->registerHookDelete();
@@ -72,6 +71,7 @@ class Application extends App {
 	private function registerHookCreate() {
 		$this->eventDispatcher->addListener(
 			'\OCA\Bookmarks::onBookmarkCreate', function(GenericEvent $e) {
+
 			FullTextSearch::createIndex(
 				BookmarksProvider::BOOKMARKS_PROVIDER_ID,
 				$e->getArgument('id'),
@@ -93,6 +93,7 @@ class Application extends App {
 	private function registerHookUpdate() {
 		$this->eventDispatcher->addListener(
 			'\OCA\Bookmarks::onBookmarkUpdate', function(GenericEvent $e) {
+
 			FullTextSearch::updateIndexStatus(
 				BookmarksProvider::BOOKMARKS_PROVIDER_ID, $e->getArgument('id'),
 				Index::INDEX_FULL
@@ -108,6 +109,7 @@ class Application extends App {
 	private function registerHookDelete() {
 		$this->eventDispatcher->addListener(
 			'\OCA\Bookmarks::onBookmarkDelete', function(GenericEvent $e) {
+
 			FullTextSearch::updateIndexStatus(
 				BookmarksProvider::BOOKMARKS_PROVIDER_ID, $e->getArgument('id'),
 				Index::INDEX_REMOVE
