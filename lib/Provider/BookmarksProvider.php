@@ -209,30 +209,12 @@ class BookmarksProvider implements IFullTextSearchProvider {
 		$this->elasticSearchService->onInitializingIndex($platform);
 	}
 
-	/**
-	 * @param IFullTextSearchPlatform $platform
-	 * @param array $arr
-	 */
-	public function onIndexingDocument(IFullTextSearchPlatform $platform, &$arr) {
-		$this->elasticSearchService->onIndexingDocument($platform, $arr);
-	}
 
 	/**
 	 * @param IFullTextSearchPlatform $platform
 	 */
 	public function onResettingIndex(IFullTextSearchPlatform $platform) {
 		$this->elasticSearchService->onResettingIndex($platform);
-	}
-
-	/**
-	 * @param IFullTextSearchPlatform $platform
-	 * @param SearchRequest $request
-	 * @param array $arr
-	 */
-	public function onSearchingQuery(
-		IFullTextSearchPlatform $platform, SearchRequest $request, &$arr
-	) {
-		$this->elasticSearchService->onSearchingQuery($platform, $request, $arr);
 	}
 
 
