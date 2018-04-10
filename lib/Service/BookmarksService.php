@@ -83,6 +83,7 @@ class BookmarksService {
 	public function getBookmarksFromUser(Runner $runner, $userId) {
 
 		$bookmarks = $this->bookmarksClass->findBookmarks($userId, 0, 'id', [], false, -1);
+//		echo json_encode($this->bookmarksClass->findTags($userId)) . "\n";
 
 		$documents = [];
 		foreach ($bookmarks as $bookmark) {
@@ -99,6 +100,7 @@ class BookmarksService {
 	 * @param BookmarksDocument[] $documents
 	 *
 	 * TODO - update $document with a error status instead of just ignore !
+	 *
 	 * @return array
 	 */
 	public function generateDocuments($documents) {
@@ -130,9 +132,16 @@ class BookmarksService {
 	 * @throws WebpageIsNotIndexableException
 	 */
 	private function updateDocumentFromBookmarksDocument(BookmarksDocument $document) {
+		$userId = $document->getAccess()
+						   ->getOwnerId();
+
+		$bookmark = $this->bookmarksClass->findUniqueBookmark($document->getId(), $userId);
+		$description = $bookmark['description'];
+
 		$html = $this->getWebpageFromUrl($document->getSource());
 
-		$document->setContent(base64_encode($html), IndexDocument::ENCODED_BASE64);
+		$content = $description . "\n\n" . $html;
+		$document->setContent(base64_encode($content), IndexDocument::ENCODED_BASE64);
 	}
 
 
@@ -176,6 +185,7 @@ class BookmarksService {
 		}
 
 		$s = $this->configService->getAppValue(ConfigService::BOOKMARKS_TTL) * 3600 * 24;
+
 		return ($index->getLastIndex() > time() - $s);
 	}
 
