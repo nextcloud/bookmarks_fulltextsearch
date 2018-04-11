@@ -18,6 +18,7 @@ Extension to the _Full text search_ app to index your users' bookmarks.
 		<admin>https://github.com/nextcloud/bookmarks_fulltextsearch/wiki</admin>
 	</documentation>
 	<category>tools</category>
+	<category>search</category>
 	<website>https://github.com/nextcloud/bookmarks_fulltextsearch</website>
 	<bugs>https://github.com/nextcloud/bookmarks_fulltextsearch/issues</bugs>
 	<repository>https://github.com/nextcloud/bookmarks_fulltextsearch.git</repository>
