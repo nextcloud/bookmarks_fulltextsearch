@@ -33,6 +33,7 @@ use OCA\Bookmarks_FullTextSearch\Service\ConfigService;
 use OCA\Bookmarks_FullTextSearch\Service\ElasticSearchService;
 use OCA\Bookmarks_FullTextSearch\Service\MiscService;
 use OCA\Bookmarks_FullTextSearch\Service\SearchService;
+use OCA\Bookmarks_FullTextSearch\Service\TagsService;
 use OCA\FullTextSearch\IFullTextSearchPlatform;
 use OCA\FullTextSearch\IFullTextSearchProvider;
 use OCA\FullTextSearch\Model\Index;
@@ -53,6 +54,9 @@ class BookmarksProvider implements IFullTextSearchProvider {
 
 	/** @var BookmarksService */
 	private $bookmarksService;
+
+	/** @var TagsService */
+	private $tagsService;
 
 	/** @var SearchService */
 	private $searchService;
@@ -150,6 +154,7 @@ class BookmarksProvider implements IFullTextSearchProvider {
 		$container = $app->getContainer();
 		$this->configService = $container->query(ConfigService::class);
 		$this->bookmarksService = $container->query(BookmarksService::class);
+		$this->tagsService = $container->query(TagsService::class);
 		$this->searchService = $container->query(SearchService::class);
 		$this->elasticSearchService = $container->query(ElasticSearchService::class);
 		$this->miscService = $container->query(MiscService::class);
