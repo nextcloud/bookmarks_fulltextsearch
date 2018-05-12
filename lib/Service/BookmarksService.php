@@ -83,7 +83,6 @@ class BookmarksService {
 	public function getBookmarksFromUser(Runner $runner, $userId) {
 
 		$bookmarks = $this->bookmarksClass->findBookmarks($userId, 0, 'id', [], false, -1);
-//		echo json_encode($this->bookmarksClass->findTags($userId)) . "\n";
 
 		$documents = [];
 		foreach ($bookmarks as $bookmark) {
@@ -136,12 +135,10 @@ class BookmarksService {
 						   ->getOwnerId();
 
 		$bookmark = $this->bookmarksClass->findUniqueBookmark($document->getId(), $userId);
-		$description = $bookmark['description'];
+		$document->addPart('description', $bookmark['description']);
 
 		$html = $this->getWebpageFromUrl($document->getSource());
-
-		$content = $description . "\n\n" . $html;
-		$document->setContent(base64_encode($content), IndexDocument::ENCODED_BASE64);
+		$document->setContent(base64_encode($html), IndexDocument::ENCODED_BASE64);
 	}
 
 

@@ -54,6 +54,7 @@ class SearchService {
 
 
 	public function improveSearchRequest(SearchRequest $request) {
+		$request->setParts(['description']);
 	}
 
 }
