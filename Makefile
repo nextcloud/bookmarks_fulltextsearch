@@ -37,14 +37,13 @@ appstore: clean
 	rsync -a \
 	--exclude=/build \
 	--exclude=/docs \
-	--exclude=/l10n/templates \
-	--exclude=/l10n/.tx \
+	--exclude=/translationfiles \
+	--exclude=/.tx \
 	--exclude=/tests \
 	--exclude=/.git \
 	--exclude=/.github \
 	--exclude=/composer.json \
 	--exclude=/composer.lock \
-	--exclude=/l10n/l10n.pl \
 	--exclude=/CONTRIBUTING.md \
 	--exclude=/issue_template.md \
 	--exclude=/README.md \
