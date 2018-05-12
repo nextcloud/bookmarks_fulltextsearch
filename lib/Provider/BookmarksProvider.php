@@ -122,8 +122,16 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	public function getOptionsTemplate() {
 		return [
 			'navigation' => [
-				'icon' => 'icon-bookmarks',
-				'css'  => 'navigate'
+				'icon'    => 'icon-bookmarks',
+				'css'     => 'fulltextsearch',
+//				'options' => [
+//					[
+//						'name'  => 'bookmarks_tags',
+//						'title' => 'Filter tags',
+//						'type'  => 'tags',
+//						'list'  => $this->tagsService->getAllForUser()
+//					]
+//				]
 			]
 		];
 	}
