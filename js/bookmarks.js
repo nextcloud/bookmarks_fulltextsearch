@@ -96,8 +96,14 @@ Bookmarks_FullTextSearch.prototype = {
 		elements.search_result.fadeOut(150, function () {
 			elements.old_bookmarks.fadeIn(150);
 		});
-	}
+	},
 
+
+	onResultClose: function () {
+		elements.search_result.fadeOut(150, function () {
+			elements.old_bookmarks.fadeIn(150);
+		});
+	}
 
 };
 
