@@ -256,6 +256,7 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	public function improveSearchResult(SearchResult $searchResult) {
 		foreach ($searchResult->getDocuments() as $document) {
 			$document->setLink($document->getSource());
+			$document->setInfo('source', $document->getSource());
 		}
 	}
 
