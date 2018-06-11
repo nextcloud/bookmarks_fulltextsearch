@@ -126,16 +126,16 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	public function getOptionsTemplate() {
 		return [
 			'navigation' => [
-				'icon'    => 'icon-bookmarks',
-				'css'     => 'fulltextsearch',
-//				'options' => [
-//					[
-//						'name'  => 'bookmarks_tags',
-//						'title' => 'Filter tags',
-//						'type'  => 'tags',
-//						'list'  => $this->tagsService->getAllForUser()
-//					]
-//				]
+				'icon' => 'icon-bookmarks',
+				'css'  => 'fulltextsearch',
+				//				'options' => [
+				//					[
+				//						'name'  => 'bookmarks_tags',
+				//						'title' => 'Filter tags',
+				//						'type'  => 'tags',
+				//						'list'  => $this->tagsService->getAllForUser()
+				//					]
+				//				]
 			]
 		];
 	}
@@ -149,6 +149,11 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 * @throws QueryException
 	 */
 	public function loadProvider() {
+		$appManager = \OC::$server->getAppManager();
+		if (!$appManager->isInstalled('bookmarks')) {
+			throw new QueryException();
+		}
+
 		$app = new Application();
 
 		$container = $app->getContainer();
