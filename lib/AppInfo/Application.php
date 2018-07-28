@@ -138,6 +138,7 @@ class Application extends App {
 		if ($container->query(IAppManager::class)
 					  ->isEnabledForUser('fulltextsearch', $user)
 			&& (FullTextSearch::isProviderIndexed(BookmarksProvider::BOOKMARKS_PROVIDER_ID))) {
+			Util::addStyle(self::APP_NAME, 'fulltextsearch');
 			$this->includeFullTextSearch();
 		}
 	}
