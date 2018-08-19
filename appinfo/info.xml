@@ -2,7 +2,7 @@
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>bookmarks_fulltextsearch</id>
-	<name>Full text search - Bookmarks (BETA)</name>
+	<name>Full text search - Bookmarks</name>
 	<summary>Index bookmarks</summary>
 	<description><![CDATA[
 
@@ -10,7 +10,7 @@ Extension to the _Full text search_ app to index your users' bookmarks.
 
 	]]>
 	</description>
-	<version>0.8.1</version>
+	<version>0.99.0</version>
 	<licence>agpl</licence>
 	<author>Maxence Lange</author>
 	<namespace>Bookmarks_FullTextSearch</namespace>
