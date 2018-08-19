@@ -27,7 +27,6 @@
 namespace OCA\Bookmarks_FullTextSearch\Service;
 
 
-use Exception;
 use OCA\Bookmarks\Controller\Lib\Bookmarks;
 use OCA\Bookmarks_FullTextSearch\Exceptions\WebpageIsNotIndexableException;
 use OCA\Bookmarks_FullTextSearch\Model\BookmarksDocument;
@@ -96,41 +95,11 @@ class BookmarksService {
 
 
 	/**
-	 * @param BookmarksDocument[] $documents
-	 *
-	 * TODO - update $document with a error status instead of just ignore !
-	 *
-	 * @return array
-	 */
-	public function generateDocuments($documents) {
-
-		$index = [];
-		foreach ($documents as $document) {
-			if (!($document instanceof BookmarksDocument)) {
-				continue;
-			}
-
-			try {
-				$this->updateDocumentFromBookmarksDocument($document);
-			} catch (Exception $e) {
-				$document->getIndex()
-						 ->setStatus(Index::INDEX_IGNORE);
-				echo 'Exception: ' . json_encode($e->getTrace()) . ' - ' . $e->getMessage() . "\n";
-			}
-
-			$index[] = $document;
-		}
-
-		return $index;
-	}
-
-
-	/**
 	 * @param BookmarksDocument $document
 	 *
 	 * @throws WebpageIsNotIndexableException
 	 */
-	private function updateDocumentFromBookmarksDocument(BookmarksDocument $document) {
+	public function updateDocumentFromBookmarksDocument(BookmarksDocument $document) {
 		$userId = $document->getAccess()
 						   ->getOwnerId();
 
@@ -160,7 +129,7 @@ class BookmarksService {
 
 		$html = curl_exec($curl);
 		if (curl_error($curl)) {
-			throw new WebpageIsNotIndexableException('Webpage is not reachable');
+			throw new WebpageIsNotIndexableException('Webpage is not reachable - ' . $url);
 		}
 
 		curl_close($curl);

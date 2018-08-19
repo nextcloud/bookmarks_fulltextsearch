@@ -26,6 +26,7 @@
 
 namespace OCA\Bookmarks_FullTextSearch\Provider;
 
+use Exception;
 use OCA\Bookmarks_FullTextSearch\AppInfo\Application;
 use OCA\Bookmarks_FullTextSearch\Model\BookmarksDocument;
 use OCA\Bookmarks_FullTextSearch\Service\BookmarksService;
@@ -204,10 +205,23 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 */
 	public function fillIndexDocuments($chunk) {
 
+		$index = [];
 		/** @var BookmarksDocument[] $chunk */
-		$result = $this->bookmarksService->generateDocuments($chunk);
+		foreach ($chunk as $document) {
+			if (!($document instanceof BookmarksDocument)) {
+				continue;
+			}
+			$this->miscService->log('#BM: ' . $document->getId());
+			try {
+				$this->bookmarksService->updateDocumentFromBookmarksDocument($document);
+			} catch (Exception $e) {
+				$this->manageErrorException($document, $e);
+			}
 
-		return $result;
+			$index[] = $document;
+		}
+
+		return $index;
 	}
 
 
@@ -274,6 +288,34 @@ class BookmarksProvider implements IFullTextSearchProvider {
 			$document->setLink($document->getSource());
 			$document->setInfo('source', $document->getSource());
 		}
+	}
+
+
+	/**
+	 * @param IndexDocument $document
+	 * @param Exception $e
+	 */
+	private function manageErrorException(IndexDocument $document, Exception $e) {
+		$document->getIndex()
+				 ->addError($e->getMessage(), get_class($e), Index::ERROR_SEV_3);
+		$this->updateNewIndexError(
+			$document->getIndex(), $e->getMessage(), get_class($e), Index::ERROR_SEV_3
+		);
+	}
+
+
+	/**
+	 * @param Index $index
+	 * @param string $message
+	 * @param string $exception
+	 * @param int $sev
+	 */
+	private function updateNewIndexError($index, $message, $exception, $sev) {
+		if ($this->runner === null) {
+			return;
+		}
+
+		$this->runner->newIndexError($index, $message, $exception, $sev);
 	}
 
 
