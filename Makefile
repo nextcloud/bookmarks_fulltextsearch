@@ -10,7 +10,7 @@ cert_dir=$(HOME)/.nextcloud/certificates
 codecov_token_dir=$(HOME)/.nextcloud/codecov_token
 version+=0.99.1
 
-all: appstore
+all: appstoree
 
 release: appstore create-tag
 

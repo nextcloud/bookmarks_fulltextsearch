@@ -207,25 +207,6 @@ class BookmarksProvider implements IFullTextSearchProvider {
 		return $chunk;
 	}
 
-//
-//		$index = [];
-//		/** @var BookmarksDocument[] $chunk */
-//		foreach ($chunk as $document) {
-//			if (!($document instanceof BookmarksDocument)) {
-//				continue;
-//			}
-//
-//			try {
-//				$this->bookmarksService->updateDocumentFromBookmarksDocument($document);
-//			} catch (Exception $e) {
-//				$this->manageErrorException($document, $e);
-//			}
-//
-//			$index[] = $document;
-//		}
-//
-//		return $index;
-//	}
 
 	/**
 	 * @param IndexDocument $document

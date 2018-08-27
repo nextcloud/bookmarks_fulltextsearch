@@ -1,5 +1,8 @@
 # Changelog
 
+### 0.99.1
+
+- improvement: no more chunks
 
 
 ### 0.7.0
