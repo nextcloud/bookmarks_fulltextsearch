@@ -204,24 +204,42 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 * @return IndexDocument[]
 	 */
 	public function fillIndexDocuments($chunk) {
+		return $chunk;
+	}
 
-		$index = [];
-		/** @var BookmarksDocument[] $chunk */
-		foreach ($chunk as $document) {
-			if (!($document instanceof BookmarksDocument)) {
-				continue;
-			}
-			$this->miscService->log('#BM: ' . $document->getId());
-			try {
-				$this->bookmarksService->updateDocumentFromBookmarksDocument($document);
-			} catch (Exception $e) {
-				$this->manageErrorException($document, $e);
-			}
+//
+//		$index = [];
+//		/** @var BookmarksDocument[] $chunk */
+//		foreach ($chunk as $document) {
+//			if (!($document instanceof BookmarksDocument)) {
+//				continue;
+//			}
+//
+//			try {
+//				$this->bookmarksService->updateDocumentFromBookmarksDocument($document);
+//			} catch (Exception $e) {
+//				$this->manageErrorException($document, $e);
+//			}
+//
+//			$index[] = $document;
+//		}
+//
+//		return $index;
+//	}
 
-			$index[] = $document;
+	/**
+	 * @param IndexDocument $document
+	 */
+	public function fillIndexDocument(IndexDocument $document) {
+		try {
+			$this->updateRunnerInfo('info', $document->getSource());
+
+			/** @var BookmarksDocument $document */
+			$this->bookmarksService->updateDocumentFromBookmarksDocument($document);
+
+		} catch (Exception $e) {
+			$this->manageErrorException($document, $e);
 		}
-
-		return $index;
 	}
 
 
@@ -316,6 +334,19 @@ class BookmarksProvider implements IFullTextSearchProvider {
 		}
 
 		$this->runner->newIndexError($index, $message, $exception, $sev);
+	}
+
+
+	/**
+	 * @param string $info
+	 * @param string $value
+	 */
+	private function updateRunnerInfo($info, $value) {
+		if ($this->runner === null) {
+			return;
+		}
+
+		$this->runner->setInfo($info, $value);
 	}
 
 
