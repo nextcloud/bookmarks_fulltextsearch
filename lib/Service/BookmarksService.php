@@ -33,7 +33,6 @@ use OCA\Bookmarks_FullTextSearch\Model\BookmarksDocument;
 use OCA\FullTextSearch\Model\DocumentAccess;
 use OCA\FullTextSearch\Model\Index;
 use OCA\FullTextSearch\Model\IndexDocument;
-use OCA\FullTextSearch\Model\Runner;
 use OCP\AppFramework\IAppContainer;
 use OCP\AppFramework\QueryException;
 
@@ -74,12 +73,11 @@ class BookmarksService {
 
 
 	/**
-	 * @param Runner $runner
 	 * @param string $userId
 	 *
 	 * @return BookmarksDocument[]
 	 */
-	public function getBookmarksFromUser(Runner $runner, $userId) {
+	public function getBookmarksFromUser($userId) {
 
 		$bookmarks = $this->bookmarksClass->findBookmarks($userId, 0, 'id', [], false, -1);
 

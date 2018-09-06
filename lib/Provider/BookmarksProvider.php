@@ -189,7 +189,7 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 * @return BookmarksDocument[]
 	 */
 	public function generateIndexableDocuments($userId) {
-		$bookmarks = $this->bookmarksService->getBookmarksFromUser($this->runner, $userId);
+		$bookmarks = $this->bookmarksService->getBookmarksFromUser($userId);
 
 		return $bookmarks;
 	}
