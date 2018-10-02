@@ -9,7 +9,7 @@ package_name=$(app_name)
 cert_dir=$(HOME)/.nextcloud/certificates
 github_account=nextcloud
 codecov_token_dir=$(HOME)/.nextcloud/codecov_token
-version+=0.99.2
+version+=1.0.0
 
 all: appstore
 
@@ -42,7 +42,6 @@ test:
 	@if [ -f $(codecov_token_dir)/$(app_name) ]; then \
 		bash <(curl -s https://codecov.io/bash) -t @$(codecov_token_dir)/$(app_name) ; \
 	fi
-
 
 appstore: clean
 	mkdir -p $(sign_dir)
