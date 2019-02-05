@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,7 +27,9 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\AppInfo;
+
 
 use OCP\AppFramework\QueryException;
 

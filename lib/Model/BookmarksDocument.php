@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,15 +27,18 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Model;
 
+
 use OCA\Bookmarks_FullTextSearch\Provider\BookmarksProvider;
-use OCA\FullTextSearch\Model\IndexDocument;
+use OCP\FullTextSearch\Model\IndexDocument;
+
 
 class BookmarksDocument extends IndexDocument {
 
 
-	public function __construct($id) {
+	public function __construct(string $id) {
 		parent::__construct(BookmarksProvider::BOOKMARKS_PROVIDER_ID, $id);
 	}
 
@@ -41,5 +47,5 @@ class BookmarksDocument extends IndexDocument {
 		parent::__destruct();
 	}
 
-
 }
+

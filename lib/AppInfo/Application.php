@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,22 +27,31 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\AppInfo;
 
+
+use Exception;
 use OCA\Bookmarks_FullTextSearch\Provider\BookmarksProvider;
-use OCA\FullTextSearch\Api\v1\FullTextSearch;
-use OCA\FullTextSearch\Model\Index;
 use OCP\App\IAppManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\QueryException;
+use OCP\FullTextSearch\IFullTextSearchManager;
+use OCP\FullTextSearch\Model\IIndex;
 use OCP\IUserSession;
 use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
+
 class Application extends App {
 
+
 	const APP_NAME = 'bookmarks_fulltextsearch';
+
+
+	/** @var IFullTextSearchManager */
+	private $fullTextSearchManager;
 
 	/** @var EventDispatcherInterface */
 	private $eventDispatcher;
@@ -50,6 +62,13 @@ class Application extends App {
 	 */
 	public function __construct(array $params = []) {
 		parent::__construct(self::APP_NAME, $params);
+
+		$c = $this->getContainer();
+
+		try {
+			$this->fullTextSearchManager = $c->query(IFullTextSearchManager::class);
+		} catch (QueryException $e) {
+		}
 	}
 
 
@@ -72,15 +91,15 @@ class Application extends App {
 		$this->eventDispatcher->addListener(
 			'\OCA\Bookmarks::onBookmarkCreate', function(GenericEvent $e) {
 
-			FullTextSearch::createIndex(
+			$this->fullTextSearchManager->createIndex(
 				BookmarksProvider::BOOKMARKS_PROVIDER_ID,
-				$e->getArgument('id'),
+				(string)$e->getArgument('id'),
 				$e->getArgument('userId')
 			);
-			FullTextSearch::updateIndexStatus(
+			$this->fullTextSearchManager->updateIndexStatus(
 				BookmarksProvider::BOOKMARKS_PROVIDER_ID,
-				$e->getArgument('id'),
-				Index::INDEX_FULL
+				(string)$e->getArgument('id'),
+				IIndex::INDEX_FULL
 			);
 		}
 		);
@@ -94,9 +113,9 @@ class Application extends App {
 		$this->eventDispatcher->addListener(
 			'\OCA\Bookmarks::onBookmarkUpdate', function(GenericEvent $e) {
 
-			FullTextSearch::updateIndexStatus(
-				BookmarksProvider::BOOKMARKS_PROVIDER_ID, $e->getArgument('id'),
-				Index::INDEX_FULL
+			$this->fullTextSearchManager->updateIndexStatus(
+				BookmarksProvider::BOOKMARKS_PROVIDER_ID, (string)$e->getArgument('id'),
+				IIndex::INDEX_FULL
 			);
 		}
 		);
@@ -110,9 +129,9 @@ class Application extends App {
 		$this->eventDispatcher->addListener(
 			'\OCA\Bookmarks::onBookmarkDelete', function(GenericEvent $e) {
 
-			FullTextSearch::updateIndexStatus(
-				BookmarksProvider::BOOKMARKS_PROVIDER_ID, $e->getArgument('id'),
-				Index::INDEX_REMOVE
+			$this->fullTextSearchManager->updateIndexStatus(
+				BookmarksProvider::BOOKMARKS_PROVIDER_ID, (string)$e->getArgument('id'),
+				IIndex::INDEX_REMOVE
 			);
 		}
 		);
@@ -135,11 +154,17 @@ class Application extends App {
 
 		$user = $userSession->getUser();
 
-		if ($container->query(IAppManager::class)
-					  ->isEnabledForUser('fulltextsearch', $user)
-			&& (FullTextSearch::isProviderIndexed(BookmarksProvider::BOOKMARKS_PROVIDER_ID))) {
-			Util::addStyle(self::APP_NAME, 'fulltextsearch');
-			$this->includeFullTextSearch();
+		try {
+			if ($container->query(IAppManager::class)
+						  ->isEnabledForUser('fulltextsearch', $user)
+				&& ($this->fullTextSearchManager->isProviderIndexed(
+					BookmarksProvider::BOOKMARKS_PROVIDER_ID
+				))) {
+				Util::addStyle(self::APP_NAME, 'fulltextsearch');
+				$this->includeFullTextSearch();
+			}
+		} catch (Exception $e) {
+
 		}
 	}
 
@@ -150,12 +175,11 @@ class Application extends App {
 	private function includeFullTextSearch() {
 		$this->eventDispatcher->addListener(
 			'\OCA\Bookmarks::loadAdditionalScripts', function() {
-			FullTextSearch::addJavascriptAPI();
+			$this->fullTextSearchManager->addJavascriptAPI();
 			Util::addScript(Application::APP_NAME, 'bookmarks');
 		}
 		);
 	}
-
 
 }
 

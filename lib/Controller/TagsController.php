@@ -67,10 +67,11 @@ class TagsController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
-	public function search($search) {
-		$tags = $this->tagsService->searchTags($search);
+	public function search(string $search): DataResponse {
+		$tags = $this->tagsService->search($search);
 
 		return new DataResponse($tags, Http::STATUS_OK);
 	}
 
 }
+

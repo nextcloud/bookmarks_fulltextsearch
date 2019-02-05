@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,10 +27,11 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Service;
 
 
-use OCA\FullTextSearch\Model\SearchRequest;
+use OCP\FullTextSearch\Model\ISearchRequest;
 
 class SearchService {
 
@@ -53,8 +57,9 @@ class SearchService {
 	}
 
 
-	public function improveSearchRequest(SearchRequest $request) {
+	public function improveSearchRequest(ISearchRequest $request) {
 		$request->setParts(['description']);
 	}
 
 }
+

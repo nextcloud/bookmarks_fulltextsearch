@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,12 +27,13 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Service;
+
 
 use OCA\Bookmarks_FullTextSearch\AppInfo\Application;
 use OCP\IConfig;
-use OCP\PreConditionNotMetException;
-use OCP\Util;
+
 
 class ConfigService {
 
@@ -49,6 +53,7 @@ class ConfigService {
 	/** @var MiscService */
 	private $miscService;
 
+
 	/**
 	 * ConfigService constructor.
 	 *
@@ -66,7 +71,7 @@ class ConfigService {
 	/**
 	 * @return array
 	 */
-	public function getConfig() {
+	public function getConfig(): array {
 		$keys = array_keys($this->defaults);
 		$data = [];
 
@@ -81,7 +86,7 @@ class ConfigService {
 	/**
 	 * @param array $save
 	 */
-	public function setConfig($save) {
+	public function setConfig(array $save) {
 		$keys = array_keys($this->defaults);
 
 		foreach ($keys as $k) {
@@ -99,7 +104,7 @@ class ConfigService {
 	 *
 	 * @return string
 	 */
-	public function getAppValue($key) {
+	public function getAppValue(string $key): string {
 		$defaultValue = null;
 		if (array_key_exists($key, $this->defaults)) {
 			$defaultValue = $this->defaults[$key];
@@ -108,27 +113,25 @@ class ConfigService {
 		return $this->config->getAppValue(Application::APP_NAME, $key, $defaultValue);
 	}
 
+
 	/**
 	 * Set a value by key
 	 *
 	 * @param string $key
 	 * @param string $value
-	 *
-	 * @return void
 	 */
-	public function setAppValue($key, $value) {
+	public function setAppValue(string $key, string $value) {
 		$this->config->setAppValue(Application::APP_NAME, $key, $value);
 	}
+
 
 	/**
 	 * remove a key
 	 *
 	 * @param string $key
-	 *
-	 * @return string
 	 */
-	public function deleteAppValue($key) {
-		return $this->config->deleteAppValue(Application::APP_NAME, $key);
+	public function deleteAppValue(string $key) {
+		$this->config->deleteAppValue(Application::APP_NAME, $key);
 	}
 
 
@@ -139,26 +142,9 @@ class ConfigService {
 	 *
 	 * @return bool
 	 */
-	public function optionIsSelected($key) {
+	public function optionIsSelected($key): bool {
 		return ($this->getAppValue($key) === '1');
 	}
 
-
-	/**
-	 * return the cloud version.
-	 * if $complete is true, return a string x.y.z
-	 *
-	 * @param boolean $complete
-	 *
-	 * @return string|integer
-	 */
-	public function getCloudVersion($complete = false) {
-		$ver = Util::getVersion();
-
-		if ($complete) {
-			return implode('.', $ver);
-		}
-
-		return $ver[0];
-	}
 }
+
