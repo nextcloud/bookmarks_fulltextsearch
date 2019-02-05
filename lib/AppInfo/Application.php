@@ -155,16 +155,12 @@ class Application extends App {
 		$user = $userSession->getUser();
 
 		try {
-			if ($container->query(IAppManager::class)
-						  ->isEnabledForUser('fulltextsearch', $user)
-				&& ($this->fullTextSearchManager->isProviderIndexed(
-					BookmarksProvider::BOOKMARKS_PROVIDER_ID
-				))) {
+			$appManager = $container->query(IAppManager::class);
+			if ($appManager->isEnabledForUser('fulltextsearch', $user)) {
 				Util::addStyle(self::APP_NAME, 'fulltextsearch');
 				$this->includeFullTextSearch();
 			}
 		} catch (Exception $e) {
-
 		}
 	}
 
@@ -175,8 +171,12 @@ class Application extends App {
 	private function includeFullTextSearch() {
 		$this->eventDispatcher->addListener(
 			'\OCA\Bookmarks::loadAdditionalScripts', function() {
-			$this->fullTextSearchManager->addJavascriptAPI();
-			Util::addScript(Application::APP_NAME, 'bookmarks');
+			if ($this->fullTextSearchManager->isProviderIndexed(
+				BookmarksProvider::BOOKMARKS_PROVIDER_ID
+			)) {
+				$this->fullTextSearchManager->addJavascriptAPI();
+				Util::addScript(Application::APP_NAME, 'bookmarks');
+			}
 		}
 		);
 	}

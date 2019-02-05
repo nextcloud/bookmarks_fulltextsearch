@@ -38,7 +38,7 @@ $app = new Application();
 
 try {
 	$app->registerHooks();
-	$app->registerBookmarksSearch();
+//	$app->registerBookmarksSearch();
 } catch (QueryException $e) {
 	/** you do nothing. */
 }
