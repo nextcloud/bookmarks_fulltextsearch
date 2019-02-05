@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,12 +27,14 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Service;
 
 
-use OCA\Bookmarks\Controller\Lib\Bookmarks;
+use OCA\Bookmarks\Bookmarks;
 use OCP\AppFramework\IAppContainer;
 use OCP\AppFramework\QueryException;
+
 
 class TagsService {
 
@@ -66,7 +71,7 @@ class TagsService {
 	/**
 	 * @return array
 	 */
-	public function getAllForUser() {
+	public function getAllForUser(): array {
 		$result = [];
 		$allTags = $this->bookmarksClass->findTags($this->userId);
 		foreach ($allTags as $tag) {
@@ -82,7 +87,7 @@ class TagsService {
 	 *
 	 * @return array
 	 */
-	public function search($search) {
+	public function search(string $search): array {
 		$result = [];
 		$allTags = $this->bookmarksClass->findTags($this->userId);
 

@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,7 +27,9 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\AppInfo;
+
 
 use OCP\AppFramework\QueryException;
 
@@ -33,7 +38,7 @@ $app = new Application();
 
 try {
 	$app->registerHooks();
-	$app->registerBookmarksSearch();
+//	$app->registerBookmarksSearch();
 } catch (QueryException $e) {
 	/** you do nothing. */
 }

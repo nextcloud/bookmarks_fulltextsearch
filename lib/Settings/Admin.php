@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,7 +27,9 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Settings;
+
 
 use Exception;
 use OCA\Bookmarks_FullTextSearch\AppInfo\Application;
@@ -35,7 +40,9 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
 
+
 class Admin implements ISettings {
+
 
 	/** @var IL10N */
 	private $l10n;
@@ -71,7 +78,7 @@ class Admin implements ISettings {
 	 * @return TemplateResponse
 	 * @throws Exception
 	 */
-	public function getForm() {
+	public function getForm(): TemplateResponse {
 		return new TemplateResponse(Application::APP_NAME, 'settings.admin', []);
 	}
 
@@ -79,7 +86,7 @@ class Admin implements ISettings {
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
-	public function getSection() {
+	public function getSection(): string {
 		return 'fulltextsearch';
 	}
 
@@ -91,9 +98,9 @@ class Admin implements ISettings {
 	 *
 	 * keep the server setting at the top, right after "server settings"
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 52;
 	}
 
-
 }
+

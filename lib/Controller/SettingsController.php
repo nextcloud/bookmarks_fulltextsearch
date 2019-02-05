@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,7 +27,9 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Controller;
+
 
 use Exception;
 use OCA\Bookmarks_FullTextSearch\AppInfo\Application;
@@ -36,7 +41,9 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
+
 class SettingsController extends Controller {
+
 
 	/** @var ConfigService */
 	private $configService;
@@ -71,7 +78,7 @@ class SettingsController extends Controller {
 	 * @return DataResponse
 	 * @throws Exception
 	 */
-	public function getSettingsAdmin() {
+	public function getSettingsAdmin(): DataResponse {
 		$data = $this->configService->getConfig();
 
 		return new DataResponse($data, Http::STATUS_OK);
@@ -79,12 +86,12 @@ class SettingsController extends Controller {
 
 
 	/**
-	 * @param $data
+	 * @param array $data
 	 *
 	 * @return DataResponse
 	 * @throws Exception
 	 */
-	public function setSettingsAdmin($data) {
+	public function setSettingsAdmin(array $data): DataResponse {
 
 		if ($this->settingsService->checkConfig($data)) {
 			$this->configService->setConfig($data);

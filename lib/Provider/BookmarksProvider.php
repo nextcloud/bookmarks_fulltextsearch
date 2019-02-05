@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,32 +27,39 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Provider;
 
+
 use Exception;
-use OCA\Bookmarks_FullTextSearch\AppInfo\Application;
+use OCA\Bookmarks_FullTextSearch\Exceptions\WebpageIsNotIndexableException;
 use OCA\Bookmarks_FullTextSearch\Model\BookmarksDocument;
 use OCA\Bookmarks_FullTextSearch\Service\BookmarksService;
 use OCA\Bookmarks_FullTextSearch\Service\ConfigService;
-use OCA\Bookmarks_FullTextSearch\Service\ElasticSearchService;
 use OCA\Bookmarks_FullTextSearch\Service\MiscService;
 use OCA\Bookmarks_FullTextSearch\Service\SearchService;
 use OCA\Bookmarks_FullTextSearch\Service\TagsService;
-use OCA\FullTextSearch\IFullTextSearchPlatform;
-use OCA\FullTextSearch\IFullTextSearchProvider;
-use OCA\FullTextSearch\Model\Index;
-use OCA\FullTextSearch\Model\IndexDocument;
-use OCA\FullTextSearch\Model\IndexOptions;
-use OCA\FullTextSearch\Model\Runner;
-use OCA\FullTextSearch\Model\SearchRequest;
-use OCA\FullTextSearch\Model\SearchResult;
 use OCP\AppFramework\QueryException;
+use OCP\FullTextSearch\IFullTextSearchPlatform;
+use OCP\FullTextSearch\IFullTextSearchProvider;
+use OCP\FullTextSearch\Model\IIndex;
+use OCP\FullTextSearch\Model\IIndexOptions;
+use OCP\FullTextSearch\Model\IndexDocument;
+use OCP\FullTextSearch\Model\IRunner;
+use OCP\FullTextSearch\Model\ISearchRequest;
+use OCP\FullTextSearch\Model\ISearchResult;
+use OCP\FullTextSearch\Model\SearchTemplate;
+use OCP\IL10N;
 
 
 class BookmarksProvider implements IFullTextSearchProvider {
 
 
 	const BOOKMARKS_PROVIDER_ID = 'bookmarks';
+
+
+	/** @var IL10N */
+	private $l10n;
 
 	/** @var ConfigService */
 	private $configService;
@@ -63,24 +73,34 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	/** @var SearchService */
 	private $searchService;
 
-	/** @var ElasticSearchService */
-	private $elasticSearchService;
-
 	/** @var MiscService */
 	private $miscService;
 
 
-	/** @var Runner */
+	/** @var IRunner */
 	private $runner;
 
-	/** @var IndexOptions */
+	/** @var IIndexOptions */
 	private $indexOptions;
+
+
+	public function __construct(
+		IL10N $l10n, ConfigService $configService, BookmarksService $bookmarksService,
+		TagsService $tagsService, SearchService $searchService, MiscService $miscService
+	) {
+		$this->l10n = $l10n;
+		$this->configService = $configService;
+		$this->bookmarksService = $bookmarksService;
+		$this->tagsService = $tagsService;
+		$this->searchService = $searchService;
+		$this->miscService = $miscService;
+	}
 
 
 	/**
 	 * return unique id of the provider
 	 */
-	public function getId() {
+	public function getId(): string {
 		return self::BOOKMARKS_PROVIDER_ID;
 	}
 
@@ -88,69 +108,140 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	/**
 	 * return name of the provider
 	 */
-	public function getName() {
+	public function getName(): string {
 		return 'Bookmarks';
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->configService->getAppValue('installed_version');
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getAppId() {
-		return Application::APP_NAME;
-	}
-
+//	/**
+//	 * @return string
+//	 */
+//	public function getVersion() {
+//		return $this->configService->getAppValue('installed_version');
+//	}
+//
+//
+//	/**
+//	 * @return string
+//	 */
+//	public function getAppId() {
+//		return Application::APP_NAME;
+//	}
+//
 
 	/**
 	 * @return array
 	 */
-	public function getConfiguration() {
+	public function getConfiguration(): array {
 		return $this->configService->getConfig();
 	}
 
 
 	/**
-	 * @param Runner $runner
+	 * @param IRunner $runner
 	 */
-	public function setRunner(Runner $runner) {
+	public function setRunner(IRunner $runner) {
 		$this->runner = $runner;
 	}
 
 
 	/**
-	 * @param IndexOptions $options
+	 * @param IIndexOptions $options
 	 */
-	public function setIndexOptions($options) {
+	public function setIndexOptions(IIndexOptions $options) {
 		$this->indexOptions = $options;
 	}
 
 
-	/**
-	 * @return array
-	 */
-	public function getOptionsTemplate() {
-		return [
-			'navigation' => [
-				'icon' => 'icon-fts-bookmarks',
-				//				'options' => [
-				//					[
-				//						'name'  => 'bookmarks_tags',
-				//						'title' => 'Filter tags',
-				//						'type'  => 'tags',
-				//						'list'  => $this->tagsService->getAllForUser()
-				//					]
-				//				]
-			]
-		];
+	public function getSearchTemplate(): SearchTemplate {
+
+		$template = new SearchTemplate('icon-fts-bookmarks', 'fulltextsearch');
+
+//		$template->addPanelOption(
+//			new SearchOption(
+//				'files_within_dir', $this->l10n->t('Within current directory'),
+//				SearchOption::CHECKBOX
+//			)
+//		);
+//
+//		$template->addPanelOption(
+//			new SearchOption(
+//				'files_local', $this->l10n->t('Within local files'),
+//				SearchOption::CHECKBOX
+//			)
+//		);
+//		$template->addNavigationOption(
+//			new SearchOption(
+//				'files_local', $this->l10n->t('Local files'),
+//				SearchOption::CHECKBOX
+//			)
+//		);
+//
+//		if ($this->configService->getAppValue(ConfigService::FILES_EXTERNAL) === '1') {
+//			$template->addPanelOption(
+//				new SearchOption(
+//					'files_external', $this->l10n->t('Within external files'),
+//					SearchOption::CHECKBOX
+//				)
+//			);
+//			$template->addNavigationOption(
+//				new SearchOption(
+//					'files_external', $this->l10n->t('External files'), SearchOption::CHECKBOX
+//				)
+//			);
+//		}
+//
+//		if ($this->configService->getAppValue(ConfigService::FILES_GROUP_FOLDERS) === '1') {
+//			$template->addPanelOption(
+//				new SearchOption(
+//					'files_group_folders', $this->l10n->t('Within group folders'),
+//					SearchOption::CHECKBOX
+//				)
+//			);
+//			$template->addNavigationOption(
+//				new SearchOption(
+//					'files_group_folders', $this->l10n->t('Group folders'),
+//					SearchOption::CHECKBOX
+//				)
+//			);
+//		}
+//
+//		$template->addPanelOption(
+//			new SearchOption(
+//				'files_extension', $this->l10n->t('Filter by extension'), SearchOption::INPUT,
+//				SearchOption::INPUT_SMALL, 'txt'
+//			)
+//		);
+//		$template->addNavigationOption(
+//			new SearchOption(
+//				'files_extension', $this->l10n->t('Extension'), SearchOption::INPUT,
+//				SearchOption::INPUT_SMALL, 'txt'
+//			)
+//		);
+
+		return $template;
 	}
+
+
+
+//		/**
+//	 * @return array
+//	 */
+//	public function getOptionsTemplate() {
+//		return [
+//			'navigation' => [
+//				'icon' => 'icon-fts-bookmarks',
+//				//				'options' => [
+//				//					[
+//				//						'name'  => 'bookmarks_tags',
+//				//						'title' => 'Filter tags',
+//				//						'type'  => 'tags',
+//				//						'list'  => $this->tagsService->getAllForUser()
+//				//					]
+//				//				]
+//			]
+//		];
+//	}
 
 
 	/**
@@ -163,18 +254,8 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	public function loadProvider() {
 		$appManager = \OC::$server->getAppManager();
 		if (!$appManager->isInstalled('bookmarks')) {
-			throw new QueryException();
+			throw new QueryException('bookmarks app not available');
 		}
-
-		$app = new Application();
-
-		$container = $app->getContainer();
-		$this->configService = $container->query(ConfigService::class);
-		$this->bookmarksService = $container->query(BookmarksService::class);
-		$this->tagsService = $container->query(TagsService::class);
-		$this->searchService = $container->query(SearchService::class);
-		$this->elasticSearchService = $container->query(ElasticSearchService::class);
-		$this->miscService = $container->query(MiscService::class);
 	}
 
 
@@ -186,9 +267,9 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 *
 	 * @param string $userId
 	 *
-	 * @return BookmarksDocument[]
+	 * @return IndexDocument[]
 	 */
-	public function generateIndexableDocuments($userId) {
+	public function generateIndexableDocuments(string $userId): array {
 		$bookmarks = $this->bookmarksService->getBookmarksFromUser($userId);
 
 		return $bookmarks;
@@ -196,32 +277,42 @@ class BookmarksProvider implements IFullTextSearchProvider {
 
 
 	/**
-	 * generate documents prior to the indexing.
-	 * throw NoResultException if no more result
-	 *
-	 * @param IndexDocument[] $chunk
-	 *
-	 * @return IndexDocument[]
-	 */
-	public function fillIndexDocuments($chunk) {
-		return $chunk;
-	}
-
-
-	/**
 	 * @param IndexDocument $document
 	 */
 	public function fillIndexDocument(IndexDocument $document) {
+		/** @var BookmarksDocument $document */
 		try {
-			$this->updateRunnerInfo('info', $document->getSource());
+			$this->updateRunnerInfoArray(
+				[
+					'info'    => $document->getSource(),
+					'title'   => '',
+					'content' => ''
+				]
+			);
 
 			/** @var BookmarksDocument $document */
 			$this->bookmarksService->updateDocumentFromBookmarksDocument($document);
-
 		} catch (Exception $e) {
 			$this->manageErrorException($document, $e);
 		}
+
 	}
+
+
+//	/**
+//	 * @param IndexDocument $document
+//	 */
+//	public function fillIndexDocument(IndexDocument $document) {
+//		try {
+//			$this->updateRunnerInfo('info', $document->getSource());
+//
+//			/** @var BookmarksDocument $document */
+//			$this->bookmarksService->updateDocumentFromBookmarksDocument($document);
+//
+//		} catch (Exception $e) {
+//			$this->manageErrorException($document, $e);
+//		}
+//	}
 
 
 	/**
@@ -229,18 +320,23 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 *
 	 * @return bool
 	 */
-	public function isDocumentUpToDate($document) {
+	public function isDocumentUpToDate(IndexDocument $document): bool {
 		return $this->bookmarksService->isDocumentUpToDate($document);
 	}
 
 
 	/**
-	 * @param Index $index
+	 * @param IIndex $index
 	 *
-	 * @return BookmarksDocument|null
+	 * @return IndexDocument
+	 * @throws WebpageIsNotIndexableException
 	 */
-	public function updateDocument(Index $index) {
-		return $this->bookmarksService->updateDocument($index);
+	public function updateDocument(IIndex $index): IndexDocument {
+		/** @var BookmarksDocument $document */
+		$document = $this->bookmarksService->updateDocument($index);
+		$this->updateRunnerInfo('info', $document->getSource());
+
+		return $document;
 	}
 
 
@@ -248,7 +344,6 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 * @param IFullTextSearchPlatform $platform
 	 */
 	public function onInitializingIndex(IFullTextSearchPlatform $platform) {
-		$this->elasticSearchService->onInitializingIndex($platform);
 	}
 
 
@@ -256,7 +351,6 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 * @param IFullTextSearchPlatform $platform
 	 */
 	public function onResettingIndex(IFullTextSearchPlatform $platform) {
-		$this->elasticSearchService->onResettingIndex($platform);
 	}
 
 
@@ -270,9 +364,9 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	/**
 	 * before a search, improve the request
 	 *
-	 * @param SearchRequest $request
+	 * @param ISearchRequest $request
 	 */
-	public function improveSearchRequest(SearchRequest $request) {
+	public function improveSearchRequest(ISearchRequest $request) {
 		$this->searchService->improveSearchRequest($request);
 	}
 
@@ -280,10 +374,11 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	/**
 	 * after a search, improve results
 	 *
-	 * @param SearchResult $searchResult
+	 * @param ISearchResult $searchResult
 	 */
-	public function improveSearchResult(SearchResult $searchResult) {
+	public function improveSearchResult(ISearchResult $searchResult) {
 		foreach ($searchResult->getDocuments() as $document) {
+			/** @var BookmarksDocument $document */
 			$document->setLink($document->getSource());
 			$document->setInfo('source', $document->getSource());
 		}
@@ -296,20 +391,21 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 */
 	private function manageErrorException(IndexDocument $document, Exception $e) {
 		$document->getIndex()
-				 ->addError($e->getMessage(), get_class($e), Index::ERROR_SEV_3);
+				 ->addError($e->getMessage(), get_class($e), IIndex::ERROR_SEV_3);
 		$this->updateNewIndexError(
-			$document->getIndex(), $e->getMessage(), get_class($e), Index::ERROR_SEV_3
+			$document->getIndex(), $e->getMessage(), get_class($e), IIndex::ERROR_SEV_3
 		);
 	}
 
 
 	/**
-	 * @param Index $index
+	 * @param IIndex $index
 	 * @param string $message
 	 * @param string $exception
 	 * @param int $sev
 	 */
-	private function updateNewIndexError($index, $message, $exception, $sev) {
+	private function updateNewIndexError(IIndex $index, string $message, string $exception, int $sev
+	) {
 		if ($this->runner === null) {
 			return;
 		}
@@ -322,7 +418,7 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	 * @param string $info
 	 * @param string $value
 	 */
-	private function updateRunnerInfo($info, $value) {
+	private function updateRunnerInfo(string $info, string $value) {
 		if ($this->runner === null) {
 			return;
 		}
@@ -331,4 +427,16 @@ class BookmarksProvider implements IFullTextSearchProvider {
 	}
 
 
+	/**
+	 * @param array $data
+	 */
+	private function updateRunnerInfoArray(array $data) {
+		if ($this->runner === null) {
+			return;
+		}
+
+		$this->runner->setInfoArray($data);
+	}
+
 }
+

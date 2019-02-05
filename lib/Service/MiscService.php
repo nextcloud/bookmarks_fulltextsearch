@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -21,65 +24,40 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *  
+ *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Service;
+
 
 use OCA\Bookmarks_FullTextSearch\AppInfo\Application;
 use OCP\ILogger;
 
+
 class MiscService {
+
 
 	/** @var ILogger */
 	private $logger;
+
 
 	public function __construct(ILogger $logger) {
 		$this->logger = $logger;
 	}
 
-	public function log($message, $level = 2) {
-		$data = array(
+
+	/**
+	 * @param string $message
+	 * @param int $level
+	 */
+	public function log(string $message, int $level = 2) {
+		$data = [
 			'app'   => Application::APP_NAME,
 			'level' => $level
-		);
+		];
 
 		$this->logger->log($level, $message, $data);
-	}
-
-	/**
-	 * @param $arr
-	 * @param $k
-	 *
-	 * @param string $default
-	 *
-	 * @return array|string|integer
-	 */
-	public static function get($arr, $k, $default = '') {
-		if (!key_exists($k, $arr)) {
-			return $default;
-		}
-
-		return $arr[$k];
-	}
-
-
-	/**
-	 * @param string $path
-	 * @param bool $trim
-	 *
-	 * @return string
-	 */
-	public static function noEndSlash($path, $trim = false) {
-		if (substr($path, -1) === '/') {
-			$path = substr($path, 0, -1);
-		}
-
-		if ($trim) {
-			$path = trim($path);
-		}
-
-		return $path;
 	}
 
 }

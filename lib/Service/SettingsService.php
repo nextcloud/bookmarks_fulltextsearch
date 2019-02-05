@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,9 +27,12 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Service;
 
+
 use OCP\IConfig;
+
 
 class SettingsService {
 
@@ -39,6 +45,7 @@ class SettingsService {
 
 	/** @var MiscService */
 	private $miscService;
+
 
 	/**
 	 * ConfigService constructor.
@@ -53,12 +60,13 @@ class SettingsService {
 		$this->miscService = $miscService;
 	}
 
+
 	/**
-	 * @param $data
+	 * @param array $data
 	 *
 	 * @return bool
 	 */
-	public function checkConfig($data) {
+	public function checkConfig(array $data): bool {
 //			return false;
 
 		return true;

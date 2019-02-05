@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+
 /**
  * Bookmarks_FullTextSearch - Indexing bookmarks
  *
@@ -24,17 +27,19 @@
  *
  */
 
+
 namespace OCA\Bookmarks_FullTextSearch\Service;
 
 
-use OCA\Bookmarks\Controller\Lib\Bookmarks;
+use OCA\Bookmarks\Bookmarks;
 use OCA\Bookmarks_FullTextSearch\Exceptions\WebpageIsNotIndexableException;
 use OCA\Bookmarks_FullTextSearch\Model\BookmarksDocument;
-use OCA\FullTextSearch\Model\DocumentAccess;
-use OCA\FullTextSearch\Model\Index;
-use OCA\FullTextSearch\Model\IndexDocument;
+use OCP\FullTextSearch\Model\DocumentAccess;
+use OCP\FullTextSearch\Model\IIndex;
+use OCP\FullTextSearch\Model\IndexDocument;
 use OCP\AppFramework\IAppContainer;
 use OCP\AppFramework\QueryException;
+
 
 class BookmarksService {
 
@@ -67,6 +72,7 @@ class BookmarksService {
 		try {
 			$this->bookmarksClass = $container->query(Bookmarks::class);
 		} catch (QueryException $e) {
+			$miscService->log('### ' . $e->getMessage());
 			/** we do nothing */
 		}
 	}
@@ -77,7 +83,7 @@ class BookmarksService {
 	 *
 	 * @return BookmarksDocument[]
 	 */
-	public function getBookmarksFromUser($userId) {
+	public function getBookmarksFromUser(string $userId): array {
 
 		$bookmarks = $this->bookmarksClass->findBookmarks($userId, 0, 'id', [], false, -1);
 
@@ -98,6 +104,10 @@ class BookmarksService {
 	 * @throws WebpageIsNotIndexableException
 	 */
 	public function updateDocumentFromBookmarksDocument(BookmarksDocument $document) {
+		if ($this->bookmarksClass === null) {
+			return;
+		}
+
 		$userId = $document->getAccess()
 						   ->getOwnerId();
 
@@ -110,12 +120,12 @@ class BookmarksService {
 
 
 	/**
-	 * @param $url
+	 * @param string $url
 	 *
-	 * @return mixed
+	 * @return string
 	 * @throws WebpageIsNotIndexableException
 	 */
-	private function getWebpageFromUrl($url) {
+	private function getWebpageFromUrl(string $url): string {
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
 		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
@@ -125,7 +135,9 @@ class BookmarksService {
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
 
-		$html = curl_exec($curl);
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+
+		$html = (string)curl_exec($curl);
 		if (curl_error($curl)) {
 			throw new WebpageIsNotIndexableException('Webpage is not reachable - ' . $url);
 		}
@@ -141,10 +153,10 @@ class BookmarksService {
 	 *
 	 * @return bool
 	 */
-	public function isDocumentUpToDate($document) {
+	public function isDocumentUpToDate(IndexDocument $document): bool {
 		$index = $document->getIndex();
 
-		if ($index->getStatus() !== Index::INDEX_OK) {
+		if ($index->getStatus() !== IIndex::INDEX_OK) {
 			return false;
 		}
 
@@ -155,16 +167,16 @@ class BookmarksService {
 
 
 	/**
-	 * @param $bookmark
-	 * @param $userId
+	 * @param array $bookmark
+	 * @param string $userId
 	 *
 	 * @return BookmarksDocument
 	 */
-	private function generateBookmarksDocumentFromBookmark($bookmark, $userId) {
+	private function generateBookmarksDocumentFromBookmark(array $bookmark, string $userId) {
 		$document = new BookmarksDocument($bookmark['id']);
 
 		$document->setAccess(new DocumentAccess($userId))
-				 ->setModifiedTime($bookmark['lastmodified'])
+				 ->setModifiedTime((int)$bookmark['lastmodified'])
 				 ->setSource($bookmark['url'])
 				 ->setTitle($bookmark['title'])
 				 ->setTags($bookmark['tags']);
@@ -174,28 +186,25 @@ class BookmarksService {
 
 
 	/**
-	 * @param Index $index
-	 *
-	 * @return null|BookmarksDocument
-	 */
-	public function updateDocument(Index $index) {
-		try {
-			$document = $this->generateDocumentFromIndex($index);
-
-			return $document;
-		} catch (WebpageIsNotIndexableException $e) {
-			return null;
-		}
-	}
-
-
-	/**
-	 * @param Index $index
+	 * @param IIndex $index
 	 *
 	 * @return BookmarksDocument
 	 * @throws WebpageIsNotIndexableException
 	 */
-	private function generateDocumentFromIndex(Index $index) {
+	public function updateDocument(IIndex $index): BookmarksDocument {
+		$document = $this->generateDocumentFromIndex($index);
+
+		return $document;
+	}
+
+
+	/**
+	 * @param IIndex $index
+	 *
+	 * @return BookmarksDocument
+	 * @throws WebpageIsNotIndexableException
+	 */
+	private function generateDocumentFromIndex(IIndex $index) {
 
 		$bookmark =
 			$this->bookmarksClass->findUniqueBookmark(
@@ -203,7 +212,7 @@ class BookmarksService {
 			);
 
 		if (sizeof($bookmark) === 0) {
-			$index->setStatus(Index::INDEX_REMOVE);
+			$index->setStatus(IIndex::INDEX_REMOVE);
 			$document = new BookmarksDocument($index->getDocumentId());
 			$document->setIndex($index);
 
@@ -218,5 +227,5 @@ class BookmarksService {
 		return $document;
 	}
 
-
 }
+
